@@ -1,6 +1,6 @@
 name: $name
 version: $version
-main: de.threeseconds.Main
+main: de.threeseconds.FreeBuild
 description: $description
 load: STARTUP
 authors:

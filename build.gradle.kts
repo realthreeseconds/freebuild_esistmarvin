@@ -1,20 +1,32 @@
 plugins {
+    java
     `java-library`
+    `maven-publish`
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.papermc.paperweight.userdev") version "1.5.5"
     id("xyz.jpenilla.run-paper") version "2.1.0" // Adds runServer and runMojangMappedServer tasks for testing
+
 }
 
 group = "de.threeseconds"
-version = "1.0.0-SNAPSHOT"
-description = "Freebuild"
+version = "0.0.1-SNAPSHOT"
+description = "FreeBuild"
 
 java {
     // Configure the java toolchain. This allows gradle to auto-provision JDK 17 on systems that only have JDK 8 installed for example.
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
 dependencies {
     paperweight.paperDevBundle("1.20-R0.1-SNAPSHOT")
+    compileOnly("de.privateseconds:CoreSystem:0.0.1-SNAPSHOT")
+    compileOnly("de.privateseconds:PermissionCenterModulePaper:0.0.1-SNAPSHOT")
+    implementation("redis.clients:jedis:4.4.3")
     // paperweight.foliaDevBundle("1.20-R0.1-SNAPSHOT")
     // paperweight.devBundle("com.example.paperfork", "1.20-R0.1-SNAPSHOT")
 }
@@ -41,7 +53,7 @@ tasks {
                 "name" to project.name,
                 "version" to project.version,
                 "description" to project.description,
-                "apiVersion" to '1.20'
+                "apiVersion" to "1.20"
         )
         inputs.properties(props)
         filesMatching("plugin.yml") {
