@@ -1,8 +1,9 @@
 package de.threeseconds;
 
 import de.privateseconds.coresystem.module.Module;
+import de.threeseconds.collections.CollectionManager;
 import de.threeseconds.commands.SpawnCommand;
-import de.threeseconds.job.JobManager;
+import de.threeseconds.jobs.JobManager;
 import de.threeseconds.listener.*;
 import de.threeseconds.npc.*;
 import de.threeseconds.quest.QuestManager;
@@ -31,6 +32,7 @@ public final class FreeBuild extends Module {
     private QuestManager questManager;
     private JobManager jobManager;
     private MenuManager menuManager;
+    private CollectionManager collectionManager;
 
 
     @Override
@@ -67,6 +69,7 @@ public final class FreeBuild extends Module {
                         .resolver(StandardTags.decorations())
                         .resolver(StandardTags.gradient())
                         .resolver(StandardTags.reset())
+                        .resolver(StandardTags.translatable())
                         .resolver(StandardTags.keybind())
                         .resolver(StandardTags.newline())
                         .build()
@@ -78,6 +81,7 @@ public final class FreeBuild extends Module {
         this.questManager = new QuestManager();
         this.jobManager = new JobManager();
         this.menuManager = new MenuManager();
+        this.collectionManager = new CollectionManager();
     }
 
     private void initListener() {
@@ -87,6 +91,7 @@ public final class FreeBuild extends Module {
         new NPCInteractListener();
         new InventoryClickListener();
         new ItemInteractListener();
+        new CollectionListener();
     }
 
     private void initCommands() {
@@ -103,6 +108,42 @@ public final class FreeBuild extends Module {
             return value.equals(this.getMiniMessage().serialize(this.getMiniMessage().deserialize(checkedValue)));
         }
         return false;
+    }
+
+    public boolean checkPDC(String itemKey, PersistentDataContainer persistentDataContainer, PersistentDataType checkedValue, Object object) {
+        NamespacedKey menuItem = new NamespacedKey(this.getPaperCore(), itemKey);
+
+        if(persistentDataContainer.has(menuItem, checkedValue)) {
+            Object value = persistentDataContainer.get(menuItem, checkedValue);
+            assert value != null;
+
+            return value.equals(object);
+        }
+        return false;
+    }
+
+    public boolean checkPDC(String itemKey, PersistentDataContainer persistentDataContainer, Integer slot) {
+        NamespacedKey menuItem = new NamespacedKey(this.getPaperCore(), itemKey);
+
+        if(persistentDataContainer.has(menuItem, PersistentDataType.INTEGER)) {
+            Integer value = persistentDataContainer.get(menuItem, PersistentDataType.INTEGER);
+            assert value != null;
+
+            return value.equals(slot);
+        }
+        return false;
+    }
+
+    public Object getPDCValue(String itemKey, PersistentDataContainer persistentDataContainer, PersistentDataType persistentDataType) {
+        NamespacedKey menuItem = new NamespacedKey(this.getPaperCore(), itemKey);
+
+        if(persistentDataContainer.has(menuItem, persistentDataType)) {
+            Object value = persistentDataContainer.get(menuItem, persistentDataType);
+            assert value != null;
+
+            return value;
+        }
+        return null;
     }
 
     public static FreeBuild getInstance() {
@@ -141,4 +182,7 @@ public final class FreeBuild extends Module {
         return miniMessage;
     }
 
+    public CollectionManager getCollectionManager() {
+        return collectionManager;
+    }
 }

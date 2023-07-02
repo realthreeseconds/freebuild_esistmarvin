@@ -2,7 +2,7 @@ package de.threeseconds.quest;
 
 import de.privateseconds.permissioncentermodulepaper.PermissionCenterModulePaper;
 import de.threeseconds.FreeBuild;
-import de.threeseconds.job.Jobs;
+import de.threeseconds.jobs.Job;
 import de.threeseconds.npc.Hologram;
 import de.threeseconds.scoreboard.GameScoreboard;
 import de.threeseconds.util.FreeBuildPlayer;
@@ -71,10 +71,10 @@ public class QuestManager {
                 else q.getQuestNPC().unregister();
             }
 
-            HashMap<Jobs, Map<Integer, Integer>> hashmap = freeBuildPlayer.getJobLevel();
+            HashMap<Job, Map<Integer, Integer>> hashmap = freeBuildPlayer.getJobLevel();
 
-            for(Jobs jobs : Jobs.values()) {
-                hashmap.put(jobs, Map.ofEntries(Map.entry(16, 22671)));
+            for(Job job : Job.values()) {
+                hashmap.put(job, Map.ofEntries(Map.entry(16, 22671)));
             }
 
             freeBuildPlayer.setJobLevel(hashmap);

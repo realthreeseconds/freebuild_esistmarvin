@@ -1,6 +1,7 @@
 package de.threeseconds.listener;
 
 import de.threeseconds.FreeBuild;
+import de.threeseconds.jobs.JobInventories;
 import de.threeseconds.npc.NonPlayerCharacterInteractEvent;
 import de.threeseconds.quest.Quest;
 import de.threeseconds.util.FreeBuildPlayer;
@@ -55,7 +56,8 @@ public class NPCInteractListener implements Listener {
                     FreeBuild.getInstance().getQuestManager().showNextQuest(freeBuildPlayer, currentQuest);
                     if(currentQuest.getQuestNPC().getNPC().getName().equals("Vera")) {
                         player.playSound(player, Sound.BLOCK_BARREL_OPEN, 1, 1);
-                        player.openInventory(FreeBuild.getInstance().getJobManager().openJobsInventory(player));
+                        new JobInventories.DefaultInventory(freeBuildPlayer).open(player);
+                        //player.openInventory(FreeBuild.getInstance().getJobManager().openJobsInventory(player));
                     }
                 }
             }
@@ -65,7 +67,8 @@ public class NPCInteractListener implements Listener {
         if(nonPlayerCharacterInteractEvent.getNPC().getName().equals("Vera") && nonPlayerCharacterInteractEvent.getActionType().equals(NonPlayerCharacterInteractEvent.ActionType.INTERACT)) {
 
             player.playSound(player, Sound.BLOCK_BARREL_OPEN, 1, 1);
-            player.openInventory(FreeBuild.getInstance().getJobManager().openJobsInventory(player));
+            new JobInventories.DefaultInventory(freeBuildPlayer).open(player);
+            //player.openInventory(FreeBuild.getInstance().getJobManager().openJobsInventory(player));
 
             return;
         }

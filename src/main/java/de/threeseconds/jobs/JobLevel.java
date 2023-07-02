@@ -1,18 +1,17 @@
-package de.threeseconds.job;
+package de.threeseconds.jobs;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class JobLevel {
 
     private Integer level;
-    private Integer xpNeeded;
+    private Integer maxXP;
     private Integer totalXPNeeded;
     private List<Object> rewards;
 
-    public JobLevel(Integer level, Integer xpNeeded, Object... rewards) {
+    public JobLevel(Integer level, Integer maxXP, Object... rewards) {
         this.level = level;
-        this.xpNeeded = xpNeeded;
+        this.maxXP = maxXP;
         this.totalXPNeeded = 50;
         //this.rewards = Arrays.asList(rewards);
     }
@@ -21,20 +20,16 @@ public class JobLevel {
         return level;
     }
 
-    public void setLevel(Integer level) {
-        this.level = level;
-    }
-
-    public Integer getXpNeeded() {
-        return xpNeeded;
+    public Integer getMaxXP() {
+        return maxXP;
     }
 
     public Integer getTotalXPNeeded() {
         return totalXPNeeded;
     }
 
-    public void setXpNeeded(Integer xpNeeded) {
-        this.xpNeeded = xpNeeded;
+    public void setMaxXP(Integer maxXP) {
+        this.maxXP = maxXP;
     }
 
     public void setTotalXPNeeded(Integer totalXPNeeded) {

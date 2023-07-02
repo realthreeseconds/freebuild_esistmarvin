@@ -10,21 +10,33 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class MenuManager {
 
-    public MenuManager() {
+    private HashMap<UUID, Boolean> hasInventoryOpen;
 
+    public MenuManager() {
+        this.hasInventoryOpen = new HashMap<>();
     }
 
-    public Inventory openInventory(Player player) {
+    public Inventory openInventory(Player player, Boolean firstTime) {
         Inventory inventory = Bukkit.createInventory(player, 9*6, FreeBuild.getInstance().getMiniMessage().deserialize("<dark_gray>» <gradient:#E0167B:#D9D938>Menü</gradient>"));
         FreeBuildPlayer freeBuildPlayer = FreeBuild.getInstance().getQuestManager().getFreeBuildPlayer(player);
 
-        this.animateFrameInventory(inventory);
+        if(firstTime)  {
+            this.animateFrameInventory(inventory);
+        } else {
+            int slot;
+            for (slot = 0; slot < 9;) {
+                inventory.setItem(slot, (new ItemBuilder(Material.WHITE_STAINED_GLASS_PANE)).setDisplayName(FreeBuild.getInstance().getMiniMessage().deserialize("<white>")).getItemStack());
+                slot++;
+            }
+            for (slot = 45; slot < 54;) {
+                inventory.setItem(slot, (new ItemBuilder(Material.WHITE_STAINED_GLASS_PANE)).setDisplayName(FreeBuild.getInstance().getMiniMessage().deserialize("<white>")).getItemStack());
+                slot++;
+            }
+        }
 
         List<Component> lores = new ArrayList<>();
         lores.add(FreeBuild.getInstance().getMiniMessage().deserialize(""));
@@ -43,16 +55,15 @@ public class MenuManager {
         lores.clear();
 
 
-
-        if(freeBuildPlayer.getJob() != null) {
+        if(freeBuildPlayer.getJobPlayer().getActiveJob() != null) {
             lores.add(FreeBuild.getInstance().getMiniMessage().deserialize(""));
             lores.add(FreeBuild.getInstance().getMiniMessage().deserialize(" <gray>Hier siehst du deinen").decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
             lores.add(FreeBuild.getInstance().getMiniMessage().deserialize(" <gray>aktuellen Fortschritt im Beruf.").decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
             lores.add(FreeBuild.getInstance().getMiniMessage().deserialize(""));
-            lores.add(FreeBuild.getInstance().getMiniMessage().deserialize(" <dark_gray>● <gray>Level <dark_gray>» <yellow>" + FreeBuild.getInstance().getJobManager().getLevelByJob(freeBuildPlayer, freeBuildPlayer.getJob())[0]).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
-            lores.add(FreeBuild.getInstance().getMiniMessage().deserialize(" <dark_gray>● <green><st>" + FreeBuild.getInstance().getJobManager().calculateProgress(Integer.valueOf(FreeBuild.getInstance().getJobManager().getLevelByJob(freeBuildPlayer, freeBuildPlayer.getJob())[1]), freeBuildPlayer.getJob().getJobsProgress().getJobLevel().get(Integer.parseInt(FreeBuild.getInstance().getJobManager().getLevelByJob(freeBuildPlayer, freeBuildPlayer.getJob())[0]) - 1).getXpNeeded()) + "</st><reset> <dark_gray>» <gray>" + Integer.valueOf(FreeBuild.getInstance().getJobManager().getLevelByJob(freeBuildPlayer, freeBuildPlayer.getJob())[1]) + "/" + freeBuildPlayer.getJob().getJobsProgress().getJobLevel().get(Integer.parseInt(FreeBuild.getInstance().getJobManager().getLevelByJob(freeBuildPlayer, freeBuildPlayer.getJob())[0]) - 1).getXpNeeded() + "XP").decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
+            lores.add(FreeBuild.getInstance().getMiniMessage().deserialize(" <dark_gray>● <gray>Level <dark_gray>» <yellow>" + freeBuildPlayer.getJobPlayer().getLevelByJob(freeBuildPlayer.getJobPlayer().getActiveJob())).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
+            lores.add(FreeBuild.getInstance().getMiniMessage().deserialize(" <dark_gray>● <green><st>" + FreeBuild.getInstance().getJobManager().calculateProgress(freeBuildPlayer.getJobPlayer().getXPByJob(freeBuildPlayer.getJobPlayer().getActiveJob()), freeBuildPlayer.getJobPlayer().getMaxXPByLevel(freeBuildPlayer.getJobPlayer().getLevelByJob(freeBuildPlayer.getJobPlayer().getActiveJob()))) + "</st><reset> <dark_gray>» <gray>" + Math.min(freeBuildPlayer.getJobPlayer().getXPByJob(freeBuildPlayer.getJobPlayer().getActiveJob()), freeBuildPlayer.getJobPlayer().getMaxXPByLevel(freeBuildPlayer.getJobPlayer().getLevelByJob(freeBuildPlayer.getJobPlayer().getActiveJob()))) + "<dark_gray>/<gray>" + freeBuildPlayer.getJobPlayer().getMaxXPByLevel(freeBuildPlayer.getJobPlayer().getLevelByJob(freeBuildPlayer.getJobPlayer().getActiveJob()))).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
             lores.add(FreeBuild.getInstance().getMiniMessage().deserialize(""));
-            inventory.setItem(20, new ItemBuilder(Material.PLAYER_HEAD).setSkullTexture(freeBuildPlayer.getJob().getHeadTexture()).setDisplayName(FreeBuild.getInstance().getMiniMessage().deserialize("<dark_gray>» <green>" + freeBuildPlayer.getJob().getJobName())).setLore(lores).getItemStack());
+            inventory.setItem(20, new ItemBuilder(Material.PLAYER_HEAD).setSkullTexture(freeBuildPlayer.getJobPlayer().getActiveJob().getHeadTexture()).setDisplayName(FreeBuild.getInstance().getMiniMessage().deserialize("<dark_gray>» <green>" + freeBuildPlayer.getJobPlayer().getActiveJob().getJobName())).setLore(lores).getItemStack());
             lores.clear();
         }
         else inventory.setItem(20, new ItemBuilder(Material.PLAYER_HEAD).setDisplayName(FreeBuild.getInstance().getMiniMessage().deserialize("<dark_gray>» <red>Ohne Beruf")).setSkullTexture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzA2ZDdiZWZjODJmMjAxZjgzZTE5Mzc2N2U2M2Y4MTAzNzIxNWFmZDQ4M2EzOGQzNjk2NTk4MmNhNmQwIn19fQ==").getItemStack());
@@ -76,6 +87,8 @@ public class MenuManager {
         lores.clear();
 
         inventory.setItem(51, new ItemBuilder(Material.COMPARATOR).setDisplayName(FreeBuild.getInstance().getMiniMessage().deserialize("<dark_gray>» <green>Einstellungen")).getItemStack());
+
+        this.hasInventoryOpen.put(player.getUniqueId(), Boolean.TRUE);
 
         return inventory;
     }

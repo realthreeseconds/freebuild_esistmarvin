@@ -1,8 +1,9 @@
 package de.threeseconds.util;
 
 import de.threeseconds.FreeBuild;
-import de.threeseconds.job.Jobs;
-import de.threeseconds.listener.JoinListener;
+import de.threeseconds.collections.CollectionPlayer;
+import de.threeseconds.jobs.Job;
+import de.threeseconds.jobs.JobPlayer;
 import de.threeseconds.quest.Chapter;
 import de.threeseconds.quest.Quest;
 import de.threeseconds.scoreboard.GameScoreboard;
@@ -28,14 +29,16 @@ public class FreeBuildPlayer {
     private double critChance;
     private double critDamage;
     private Component actionBar;
-    private Jobs job;
+    private JobPlayer jobPlayer;
     private GameScoreboard gameScoreboard;
     private BossBar userBossBar;
     private Chapter currentChapter;
     private Quest currentQuest;
     private Location fastTravelLocation;
     private HashMap<Quest, Integer> currentQuestDialogeCount;
-    private HashMap<Jobs, Map<Integer, Integer>> jobLevel;
+    private HashMap<Job, Map<Integer, Integer>> jobLevel;
+
+    private CollectionPlayer collectionPlayer;
 
 
     public FreeBuildPlayer(Player player) {
@@ -49,13 +52,15 @@ public class FreeBuildPlayer {
         this.speed = 1;
         this.critChance = 0.5;
         this.critDamage = 1.0;
+        this.jobPlayer = new JobPlayer(this);
         this.actionBar = FreeBuild.getInstance().getMiniMessage().deserialize("<gradient:#30CFD0:#926DD1>\uD83D\uDD25 " + this.souls + "/50 Seelen</gradient>     <gradient:#AB2F41:#FF2B24>❤ " + (int)Math.round(this.health) + "/100 Leben</gradient>     <gradient:#51E611:#48944D>\uD83D\uDEE1 " + this.defense + "/10 Verteidigung</gradient>");
-        this.job = null;
         this.gameScoreboard = null;
         this.userBossBar = null;
         this.fastTravelLocation = FreeBuild.getInstance().getHubLocation();
         this.currentQuestDialogeCount = new HashMap<>();
         this.jobLevel = new HashMap<>();
+
+        this.collectionPlayer = new CollectionPlayer(this);
 
 
         final int fixScaleAt = (int)Math.rint(100d);
@@ -67,6 +72,10 @@ public class FreeBuildPlayer {
         else {
             player.setHealthScale(maxHealth);
         }
+    }
+
+    public CollectionPlayer getCollectionPlayer() {
+        return collectionPlayer;
     }
 
     public Player getPlayer() {
@@ -157,16 +166,8 @@ public class FreeBuildPlayer {
         this.actionBar = actionBar;
     }
 
-    public Jobs getJob() {
-        return job;
-    }
-
-    public Jobs getJob(Jobs jobs) {
-        return jobs;
-    }
-
-    public void setJob(Jobs job) {
-        this.job = job;
+    public JobPlayer getJobPlayer() {
+        return jobPlayer;
     }
 
     public GameScoreboard getGameScoreboard() {
@@ -217,11 +218,11 @@ public class FreeBuildPlayer {
         this.currentQuestDialogeCount = currentQuestDialogeCount;
     }
 
-    public HashMap<Jobs, Map<Integer, Integer>> getJobLevel() {
+    public HashMap<Job, Map<Integer, Integer>> getJobLevel() {
         return jobLevel;
     }
 
-    public void setJobLevel(HashMap<Jobs, Map<Integer, Integer>> jobLevel) {
+    public void setJobLevel(HashMap<Job, Map<Integer, Integer>> jobLevel) {
         this.jobLevel = jobLevel;
     }
 }
