@@ -2,7 +2,7 @@ package de.threeseconds.quest;
 
 import de.privateseconds.permissioncentermodulepaper.PermissionCenterModulePaper;
 import de.threeseconds.FreeBuild;
-import de.threeseconds.job.Jobs;
+import de.threeseconds.jobs.Job;
 import de.threeseconds.npc.Hologram;
 import de.threeseconds.scoreboard.GameScoreboard;
 import de.threeseconds.util.FreeBuildPlayer;
@@ -34,10 +34,10 @@ public class QuestManager {
     public void createFreeBuildPlayer(PlayerJoinEvent playerJoinEvent, Player player) {
         FreeBuildPlayer freeBuildPlayer = new FreeBuildPlayer(player);
 
-        HashMap<Jobs, Map<Integer, Integer>> hashmap = freeBuildPlayer.getJobLevel();
+        HashMap<Job, Map<Integer, Integer>> hashmap = freeBuildPlayer.getJobLevel();
 
-        for(Jobs jobs : Jobs.values()) {
-            hashmap.put(jobs, Map.ofEntries(Map.entry(16, 22671)));
+        for(Job job : Job.values()) {
+            hashmap.put(job, Map.ofEntries(Map.entry(16, 22671)));
         }
 
         freeBuildPlayer.setJobLevel(hashmap);
@@ -61,7 +61,7 @@ public class QuestManager {
 
             freeBuildPlayer.getPlayer().playSound(freeBuildPlayer.getPlayer(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 1);
             freeBuildPlayer.getPlayer().hideBossBar(freeBuildPlayer.getUserBossBar());
-            freeBuildPlayer.getPlayer().sendMessage(FreeBuild.getInstance().getMiniMessage().deserialize("<gray>Du hast die Quest <green>'" + oldQuest.getQuestName() + "' <gray>des Kapitel <green>'Tutorial' <gray>abgeschlossen."));
+            freeBuildPlayer.getPlayer().sendMessage(FreeBuild.getInstance().getMiniMessage().deserialize("<gray>Du hast die Quest <green>'" + oldQuest.getQuestName() + "' <gray>des Kapitel <green>'" + this.getChapterByCurrentQuest(oldQuest).getChapterName().replace(":", "") + "' <gray>abgeschlossen."));
 
             return;
         }

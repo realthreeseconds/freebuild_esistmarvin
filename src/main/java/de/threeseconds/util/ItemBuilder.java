@@ -3,6 +3,11 @@ package de.threeseconds.util;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import de.threeseconds.FreeBuild;
+import de.threeseconds.collections.Collection;
+import de.threeseconds.collections.CollectionItem;
+import de.threeseconds.collections.CollectionItemDataType;
+import de.threeseconds.jobs.Job;
+import de.threeseconds.jobs.JobDataType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -21,12 +26,17 @@ import org.bukkit.profile.PlayerTextures;
 
 import javax.naming.Name;
 import javax.xml.stream.events.Namespace;
+import java.io.Serializable;
 import java.util.*;
 
-public class ItemBuilder {
+public class ItemBuilder implements Serializable {
 
-    private ItemStack itemStack;
+    private transient ItemStack itemStack;
     private String key;
+    private transient Collection collection;
+    private transient CollectionItem collectionItem;
+    private transient Job job;
+    private int slot;
 
     public ItemBuilder(ItemStack itemStack) {
         this.itemStack = itemStack;
@@ -145,10 +155,30 @@ public class ItemBuilder {
         return this;
     }
 
+    public ItemBuilder setCollection(Collection collection) {
+        this.collection = collection;
+        return this;
+    }
+
+    public ItemBuilder setCollectionItem(CollectionItem collectionItem, int slot) {
+        this.collectionItem = collectionItem;
+        this.slot = slot;
+        return this;
+    }
+
+    public ItemBuilder setJobData(Job job) {
+        this.job = job;
+        return this;
+    }
+
     public ItemBuilder setDisplayName(Component displayName) {
         ItemMeta itemMeta = getItemStack().getItemMeta();
         itemMeta.displayName(displayName.decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
         if(this.key != null) itemMeta.getPersistentDataContainer().set(new NamespacedKey(FreeBuild.getInstance().getPaperCore(), this.key), PersistentDataType.STRING, FreeBuild.getInstance().getMiniMessage().serialize(displayName));
+        if(this.collection != null) itemMeta.getPersistentDataContainer().set(new NamespacedKey(FreeBuild.getInstance().getPaperCore(), "collection-item"), PersistentDataType.STRING, this.collection.name());
+        itemMeta.getPersistentDataContainer().set(new NamespacedKey(FreeBuild.getInstance().getPaperCore(), "collectionItem-itemSlot"), PersistentDataType.INTEGER, this.slot);
+        if(this.collectionItem != null) itemMeta.getPersistentDataContainer().set(new NamespacedKey(FreeBuild.getInstance().getPaperCore(), "collectionItem-item"), new CollectionItemDataType(), this.collectionItem);
+        if(this.job != null) itemMeta.getPersistentDataContainer().set(new NamespacedKey(FreeBuild.getInstance().getPaperCore(), "jobData-item"), new JobDataType(), this.job);
         setItemMeta(itemMeta);
         return this;
     }

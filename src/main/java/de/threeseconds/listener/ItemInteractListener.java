@@ -23,7 +23,7 @@ public class ItemInteractListener implements Listener {
             if(playerInteractEvent.getMaterial() == Material.NETHER_STAR) {
 
                 if(FreeBuild.getInstance().checkPDC("menu-item", playerInteractEvent.getItem().getItemMeta().getPersistentDataContainer(), "<green><b>Menü</b> <dark_gray>» <gray>Rechtsklick")) {
-                    player.openInventory(FreeBuild.getInstance().getMenuManager().openInventory(player));
+                    player.openInventory(FreeBuild.getInstance().getMenuManager().openInventory(player, true));
                     player.playSound(player, Sound.BLOCK_BARREL_OPEN, 1, 1);
 
                     return;

@@ -1,6 +1,9 @@
 package de.threeseconds.listener;
 
 import de.threeseconds.FreeBuild;
+import de.threeseconds.jobs.JobInventories;
+import de.threeseconds.npc.NonPlayerCharacterInteractEvent;
+import de.threeseconds.quest.Quest;
 import de.threeseconds.npc.PlayerHologram;
 import de.threeseconds.npc.PlayerNPC;
 import de.threeseconds.npc.event.NonPlayerCharacterInteractEvent;
@@ -15,6 +18,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+
+import java.util.*;
 
 public class NPCInteractListener implements Listener {
 

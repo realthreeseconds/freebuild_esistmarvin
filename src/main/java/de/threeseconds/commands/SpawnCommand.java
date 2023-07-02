@@ -1,6 +1,8 @@
 package de.threeseconds.commands;
 
 import de.threeseconds.FreeBuild;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -19,7 +21,8 @@ public class SpawnCommand extends Command {
 
         if(!(sender instanceof Player player)) return false;
 
-        player.teleport(FreeBuild.getInstance().getHubLocation());
+
+        player.teleport(new Location(Bukkit.getWorld("freebuildWorld"), 0, 64, 0));
         player.playSound(FreeBuild.getInstance().getHubLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
 
         return false;
