@@ -1,13 +1,14 @@
 package de.threeseconds.listener;
 
 import de.threeseconds.FreeBuild;
-import de.threeseconds.npc.PacketReader;
+import de.threeseconds.npc.manager.PacketReader;
 import de.threeseconds.util.ItemBuilder;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 public class JoinListener implements Listener {
 
@@ -29,11 +30,13 @@ public class JoinListener implements Listener {
 
         FreeBuild.getInstance().getQuestManager().createFreeBuildPlayer(playerJoinEvent, player);
 
-        player.playerListName();
-
-
         //showArrow(player);
 
+    }
+
+    @EventHandler
+    public void onDisconnect(PlayerQuitEvent event) {
+        event.quitMessage(null);
     }
 
     /*

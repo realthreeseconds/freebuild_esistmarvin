@@ -7,6 +7,7 @@ import de.privateseconds.permissioncentermodulepaper.lib.PermissionUser;
 import de.threeseconds.FreeBuild;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -39,20 +40,23 @@ public class GameScoreboard extends ScoreboardBuilder {
     }
 
     public void updatePlayerPrefix() {
-        for (PermissionUser permissionUser : PermissionCenterModulePaper.getInstance().getUserManager().getChachedUsers()) {
-            Player player = permissionUser.getPlayer();
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            PermissionUser permissionUser = PermissionCenterModulePaper.getInstance().getUserManager().getUser(player.getUniqueId());
             Scoreboard scoreboard = player.getScoreboard();
+
             for (PermissionGroup group : PermissionCenterModulePaper.getInstance().getGroupManager().getGroups()) {
-                Team teamGroup = (scoreboard.getTeam(group.getSortId().toString() + group.getSortId().toString()) == null) ? scoreboard.registerNewTeam(group.getSortId().toString() + group.getSortId().toString()) : scoreboard.getTeam(group.getSortId().toString() + group.getSortId().toString());
+                Team teamGroup = (scoreboard.getTeam(group.getSortId().toString() + group.getId().toString()) == null) ? scoreboard.registerNewTeam(group.getSortId().toString() + group.getId().toString()) : scoreboard.getTeam(group.getSortId().toString() + group.getId().toString());
                 assert teamGroup != null;
                 teamGroup.prefix(Component.text(group.getPrefix()));
                 teamGroup.color(this.translateColor(group.getDisplay()));
             }
-            for (PermissionUser targetUser : PermissionCenterModulePaper.getInstance().getUserManager().getChachedUsers()) {
-                if (targetUser.getPlayer() != null)
-                    scoreboard.getTeam(targetUser.getHighstGroup().getSortId().toString() + targetUser.getHighstGroup().getSortId().toString()).addPlayer(targetUser.getPlayer());
-            }
-        }
+
+            PermissionCenterModulePaper.getInstance().getUserManager().getChachedUsers().forEach(target -> {
+                if(target.getPlayer() != null)
+                    scoreboard.getTeam(target.getHighstGroup().getSortId().toString() + target.getHighstGroup().getId().toString()).addPlayer(target.getPlayer());
+            });
+
+        });
     }
 
     private NamedTextColor translateColor(Color color) {

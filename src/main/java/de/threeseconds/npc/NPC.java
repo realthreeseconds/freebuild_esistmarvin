@@ -234,6 +234,11 @@ public class NPC {
         return this;
     }
 
+    public void update(Player player) {
+        if(isVisibleForPlayer.get(player.getUniqueId())) remove(player);
+        if(!isVisibleForPlayer.get(player.getUniqueId()) && (player.getLocation().distance(location)) < visibiltyDistance) spawn(player);
+    }
+
     public NPC swingMainHand(Player player) {
 
         ClientboundAnimatePacket animatePacket = new ClientboundAnimatePacket(entity, 0);

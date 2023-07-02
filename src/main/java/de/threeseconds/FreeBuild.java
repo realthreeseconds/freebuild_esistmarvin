@@ -3,8 +3,11 @@ package de.threeseconds;
 import de.privateseconds.coresystem.module.Module;
 import de.threeseconds.commands.SpawnCommand;
 import de.threeseconds.job.JobManager;
+import de.threeseconds.lib.MainLobbyRunnable;
 import de.threeseconds.listener.*;
-import de.threeseconds.npc.*;
+import de.threeseconds.npc.manager.HologramManager;
+import de.threeseconds.npc.manager.NonPlayerCharacterManager;
+import de.threeseconds.quest.MissionManager;
 import de.threeseconds.quest.QuestManager;
 import de.threeseconds.util.MenuManager;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -31,6 +34,7 @@ public final class FreeBuild extends Module {
     private QuestManager questManager;
     private JobManager jobManager;
     private MenuManager menuManager;
+    private MissionManager missionManager;
 
 
     @Override
@@ -43,7 +47,7 @@ public final class FreeBuild extends Module {
         this.initListener();
         this.initCommands();
 
-        new MainLobbyRunnable().runTaskTimer(this.getPaperCore(), 0L, 0L);
+        new MainLobbyRunnable().runTaskTimer(this.getPaperCore(), 0L, 1L);
 
     }
 
@@ -78,6 +82,7 @@ public final class FreeBuild extends Module {
         this.questManager = new QuestManager();
         this.jobManager = new JobManager();
         this.menuManager = new MenuManager();
+        this.missionManager = new MissionManager(getInstance());
     }
 
     private void initListener() {
@@ -141,4 +146,7 @@ public final class FreeBuild extends Module {
         return miniMessage;
     }
 
+    public MissionManager getMissionManager() {
+        return missionManager;
+    }
 }

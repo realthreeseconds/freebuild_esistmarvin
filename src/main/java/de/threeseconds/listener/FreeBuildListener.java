@@ -47,6 +47,7 @@ public class FreeBuildListener implements Listener {
 
     @EventHandler
     public void onSwap(PlayerSwapHandItemsEvent playerSwapHandItemsEvent) {
+        if(!playerSwapHandItemsEvent.getOffHandItem().hasItemMeta()) return;
         if(FreeBuild.getInstance().checkPDC("menu-item", playerSwapHandItemsEvent.getOffHandItem().getItemMeta().getPersistentDataContainer(), "<green><b>Menü</b> <dark_gray>» <gray>Rechtsklick")) {
             playerSwapHandItemsEvent.setCancelled(true);
         }

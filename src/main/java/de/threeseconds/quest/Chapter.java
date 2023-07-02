@@ -4,47 +4,43 @@ import java.util.List;
 
 public enum Chapter {
 
-    CHAPTER_TUT(
+    TUTORIAL(
             0,
-            "Tutorial:",
-            Quest.QUEST_1, Quest.QUEST_2
-    ),
-    CHAPTER_1(
-            1,
-            "Der Beginn:"
+            "Tutorial",
+            "Aller Anfang ist schwer!"
     );
 
-    private Integer chapterID;
-    private String chapterName;
-    private List<Quest> chapterQuestList;
+    private final int id;
 
-    Chapter(Integer chapterID, String chapterName, Quest... chapterQuestList) {
-        this.chapterID = chapterID;
-        this.chapterName = chapterName;
-        this.chapterQuestList = List.of(chapterQuestList);
+    private String name;
+
+    private String description;
+
+    Chapter(int id, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
     }
 
-    public Integer getChapterID() {
-        return chapterID;
+    public Chapter setName(String name) {
+        this.name = name;
+        return this;
     }
 
-    public void setChapterID(Integer chapterID) {
-        this.chapterID = chapterID;
+    public Chapter setDescription(String description) {
+        this.description = description;
+        return this;
     }
 
-    public String getChapterName() {
-        return chapterName;
+    public int getId() {
+        return id;
     }
 
-    public void setChapterName(String chapterName) {
-        this.chapterName = chapterName;
+    public String getName() {
+        return name;
     }
 
-    public List<Quest> getChapterQuestList() {
-        return chapterQuestList;
-    }
-
-    public void setChapterQuestList(List<Quest> chapterQuestList) {
-        this.chapterQuestList = chapterQuestList;
+    public String getDescription() {
+        return description;
     }
 }
