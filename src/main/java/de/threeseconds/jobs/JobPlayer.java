@@ -1,8 +1,12 @@
 package de.threeseconds.jobs;
 
+import de.threeseconds.FreeBuild;
+import de.threeseconds.collections.CollectionItem;
 import de.threeseconds.util.FreeBuildPlayer;
 
+import java.text.NumberFormat;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class JobPlayer {
 
@@ -21,11 +25,10 @@ public class JobPlayer {
         this.jobXP = new HashMap<>();
 
         for(Job jobs : Job.values()) {
-            this.jobLevel.put(jobs, 0);
+            this.jobLevel.put(jobs, 1);
             this.jobXP.put(jobs, 0);
         }
     }
-
 
     public void addLevelByJob(Job job) {
         this.jobLevel.put(job, this.getLevelByJob(job) + 1);
@@ -41,6 +44,17 @@ public class JobPlayer {
 
     public Integer getXPByJob(Job job) {
         return this.jobXP.get(job);
+    }
+
+    public String getCompactXPByJob(Job job) {
+        NumberFormat numberFormat = NumberFormat.getCompactNumberInstance(Locale.US, NumberFormat.Style.SHORT);
+        numberFormat.setMinimumFractionDigits(1);
+
+        return numberFormat.format(this.jobXP.get(job)).toLowerCase();
+    }
+
+    public String getCompactMaxXPByLevel(Integer level) {
+        return this.activeJob.getJobLevels().get(level).getCompactMaxXP();
     }
 
     public Integer getMaxXPByLevel(Integer level) {

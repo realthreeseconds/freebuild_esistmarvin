@@ -4,6 +4,7 @@ import de.threeseconds.FreeBuild;
 import de.threeseconds.util.FreeBuildPlayer;
 import de.threeseconds.util.InventoryBuilder;
 import de.threeseconds.util.ItemBuilder;
+import de.threeseconds.util.MenuInventories;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ScopedComponent;
 import net.kyori.adventure.text.TranslatableComponent;
@@ -83,7 +84,7 @@ public class CollectionInventories {
 
                 if(FreeBuild.getInstance().checkPDC("collections-back", inventoryClickEvent.getCurrentItem().getItemMeta().getPersistentDataContainer(), "<dark_red>« <red>Zurück")) {
                     player.playSound(player, Sound.ENTITY_ITEM_PICKUP, 1, 1);
-                    player.openInventory(FreeBuild.getInstance().getMenuManager().openInventory(player, false));
+                    new MenuInventories.DefaultInventory(freeBuildPlayer).open(player);
                     return;
                 }
 

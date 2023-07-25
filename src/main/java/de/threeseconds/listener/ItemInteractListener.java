@@ -1,6 +1,8 @@
 package de.threeseconds.listener;
 
 import de.threeseconds.FreeBuild;
+import de.threeseconds.util.FreeBuildPlayer;
+import de.threeseconds.util.MenuInventories;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -23,7 +25,7 @@ public class ItemInteractListener implements Listener {
             if(playerInteractEvent.getMaterial() == Material.NETHER_STAR) {
 
                 if(FreeBuild.getInstance().checkPDC("menu-item", playerInteractEvent.getItem().getItemMeta().getPersistentDataContainer(), "<green><b>Menü</b> <dark_gray>» <gray>Rechtsklick")) {
-                    player.openInventory(FreeBuild.getInstance().getMenuManager().openInventory(player, true));
+                    new MenuInventories.DefaultInventory(FreeBuild.getInstance().getQuestManager().getFreeBuildPlayer(player)).open(player);
                     player.playSound(player, Sound.BLOCK_BARREL_OPEN, 1, 1);
 
                     return;

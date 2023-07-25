@@ -7,6 +7,8 @@ import de.threeseconds.npc.Hologram;
 import de.threeseconds.scoreboard.GameScoreboard;
 import de.threeseconds.util.FreeBuildPlayer;
 import net.kyori.adventure.bossbar.BossBar;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -35,12 +37,15 @@ public class QuestManager {
     }
 
     public void createFreeBuildPlayer(PlayerJoinEvent playerJoinEvent, Player player) {
-        FreeBuildPlayer freeBuildPlayer = new FreeBuildPlayer(player);
+        FreeBuildPlayer freeBuildPlayer;
+        if(this.getFreeBuildPlayers().containsKey(player.getUniqueId())) freeBuildPlayer = this.getFreeBuildPlayers().get(player.getUniqueId());
+        else freeBuildPlayer = new FreeBuildPlayer(player);
+
         JedisPool jedisPool = new JedisPool("localhost", 6379);
         if(!jedisPool.getResource().exists(player.getUniqueId() + ":freebuild")) {
             jedisPool.getResource().set(player.getUniqueId() + ":freebuild", "true");
 
-            playerJoinEvent.joinMessage(FreeBuild.getInstance().getMiniMessage().deserialize(FreeBuild.getInstance().getPREFIX() + this.decodeColorcode(PermissionCenterModulePaper.getInstance().getUserManager().getUser(player.getUniqueId()).getDisplay().getColor()) + player.getName() + " <gray>ist neu auf FreeBuild."));
+            //playerJoinEvent.joinMessage(FreeBuild.getInstance().getMiniMessage().deserialize(FreeBuild.getInstance().getPREFIX() + this.decodeColorcode(PermissionCenterModulePaper.getInstance().getUserManager().getUser(player.getUniqueId()).getDisplay().getColor()) + player.getName() + " <gray>ist neu auf FreeBuild."));
 
             freeBuildPlayer.setCurrentChapter(Chapter.CHAPTER_TUT);
             freeBuildPlayer.setCurrentQuest(freeBuildPlayer.getCurrentChapter().getChapterQuestList().get(0));
@@ -60,16 +65,21 @@ public class QuestManager {
                 }
             }.runTaskLater((Plugin) FreeBuild.getInstance().getPaperCore(), 50L);
         } else {
+            /*
             freeBuildPlayer.setCurrentChapter(Chapter.valueOf(jedisPool.getResource().get(player.getUniqueId() + ":freebuild:currentChapter")));
             freeBuildPlayer.setCurrentQuest(Quest.valueOf(jedisPool.getResource().get(player.getUniqueId() + ":freebuild:currentQuest")));
             freeBuildPlayer.setUserBossBar(BossBar.bossBar(FreeBuild.getInstance().getMiniMessage().deserialize("<gradient:white:red>" + freeBuildPlayer.getCurrentChapter().getChapterName() + "</gradient> " + freeBuildPlayer.getCurrentQuest().getQuestName()), 1, BossBar.Color.GREEN, BossBar.Overlay.NOTCHED_20));
 
-            freeBuildPlayer.getCurrentQuest().getQuestNPC().spawn(player);
+            //freeBuildPlayer.getCurrentQuest().getQuestNPC().spawn(player);
 
             for(Quest q : Quest.values()) {
                 if(q.getQuestNPC() == freeBuildPlayer.getCurrentQuest().getQuestNPC()) q.getQuestNPC().spawn(player);
                 else q.getQuestNPC().unregister();
             }
+
+
+
+             */
 
             HashMap<Job, Map<Integer, Integer>> hashmap = freeBuildPlayer.getJobLevel();
 
@@ -82,12 +92,16 @@ public class QuestManager {
 
         jedisPool.close();
 
-        player.showBossBar(freeBuildPlayer.getUserBossBar());
-
         GameScoreboard gameScoreboard = new GameScoreboard(player);
         freeBuildPlayer.setGameScoreboard(gameScoreboard);
 
+
+
         this.freeBuildPlayers.put(player.getUniqueId(), freeBuildPlayer);
+    }
+
+    public void removeFreebuildPlayer(Player player) {
+        this.freeBuildPlayers.remove(player.getUniqueId());
     }
 
     public void showNextQuest(FreeBuildPlayer freeBuildPlayer, Quest oldQuest) {
@@ -151,22 +165,22 @@ public class QuestManager {
         return this.freeBuildPlayers.get(player.getUniqueId());
     }
 
-    private void sendTitle(Player player) {
-        ArrayList<String> animation = getTitleComponent();
+    public void sendTitle(Player player) {
+        ArrayList<String> animation = this.getTitleComponent();
         new BukkitRunnable(){
             int step = 0;
             public void run(){
 
-                if(step+1 >= animation.size()) {
-                    player.sendTitle(animation.get(step), "§7Willkommen, §f" + PermissionCenterModulePaper.getInstance().getUserManager().getUser(player.getUniqueId()).getDisplay().getColor() + player.getName() + "§7!", 0, 25, 25);
+                if(this.step + 1 >= animation.size()) {
+                    player.showTitle(Title.title(MiniMessage.miniMessage().deserialize(animation.get(this.step)), MiniMessage.miniMessage().deserialize("<gray>Willkommen, <white>" + PermissionCenterModulePaper.getAPI().getOnlineUser(player).getDisplayString() + player.getName() + "<gray>!"), Title.Times.times(Duration.ofMillis(0L), Duration.ofMillis(1500L), Duration.ofMillis(1500L))));
                     player.playSound(player, Sound.BLOCK_ANVIL_LAND, 3f, 3f);
                     cancel();
                     //titleWait.put(player.getUniqueId(), false);
                 } else {
-                    player.sendTitle(animation.get(step), "", 0, 25, 0);
+                    player.showTitle(Title.title(MiniMessage.miniMessage().deserialize(animation.get(this.step)), Component.empty(), Title.Times.times(Duration.ofMillis(0L), Duration.ofMillis(1500L), Duration.ofMillis(0L))));
                     player.playSound(player, Sound.ENTITY_CREEPER_HURT, 3f, 3f);
                 }
-                step++;
+                this.step++;
             }
 
         }.runTaskTimer(FreeBuild.getInstance().getPaperCore(), 10, 2);
@@ -175,17 +189,17 @@ public class QuestManager {
     private ArrayList<String> getTitleComponent() {
         ArrayList<String> list = new ArrayList<>();
 
-        list.add("§8» ");
-        list.add("§8» §fF");
-        list.add("§8» §aF§fr");
-        list.add("§8» §aFr§fe");
-        list.add("§8» §aFre§fe");
-        list.add("§8» §aFree§fB");
-        list.add("§8» §aFreeB§fu");
-        list.add("§8» §aFreeBuS§fi");
-        list.add("§8» §aFreeBui§fl");
-        list.add("§8» §aFreeBuil§fd");
-        list.add("§8» §aFreeBuild");
+        list.add("<dark_gray>» ");
+        list.add("<dark_gray>» <white>F");
+        list.add("<dark_gray>» <gradient:#33F702:#1B660F>F</gradient><white>r");
+        list.add("<dark_gray>» <gradient:#33F702:#1B660F>Fr</gradient><white>e");
+        list.add("<dark_gray>» <gradient:#33F702:#1B660F>Fre</gradient><white>e");
+        list.add("<dark_gray>» <gradient:#33F702:#1B660F>Free</gradient><white>B");
+        list.add("<dark_gray>» <gradient:#33F702:#1B660F>FreeB</gradient><white>u");
+        list.add("<dark_gray>» <gradient:#33F702:#1B660F>FreeBu</gradient><white>i");
+        list.add("<dark_gray>» <gradient:#33F702:#1B660F>FreeBui</gradient><white>l");
+        list.add("<dark_gray>» <gradient:#33F702:#1B660F>FreeBuil</gradient><white>d");
+        list.add("<dark_gray>» <gradient:#33F702:#1B660F>FreeBuild</gradient>");
 
         return list;
     }
@@ -194,9 +208,14 @@ public class QuestManager {
         String s = "";
         switch(colorCode) {
             case "§a" -> s = "<green>";
+            case "§c" -> s = "<red>";
             case "§4" -> s = "<dark_red>";
         }
         return s;
+    }
+
+    public HashMap<UUID, FreeBuildPlayer> getFreeBuildPlayers() {
+        return freeBuildPlayers;
     }
 
     public List<Quest> getQuestNPCList() {

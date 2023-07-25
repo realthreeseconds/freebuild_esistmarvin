@@ -3,7 +3,10 @@ package de.threeseconds.listener;
 import de.threeseconds.FreeBuild;
 import de.threeseconds.collections.Collection;
 import de.threeseconds.collections.CollectionItem;
+import de.threeseconds.jobs.Job;
+import de.threeseconds.jobs.JobInventories;
 import de.threeseconds.util.FreeBuildPlayer;
+import de.threeseconds.util.InventoryBuilder;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -16,8 +19,10 @@ import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -62,6 +67,7 @@ public class CollectionListener implements Listener {
                                     player.playSound(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.1f, 1);
                                 }
 
+                                FreeBuild.getInstance().getJobManager().displayXP(freeBuildPlayer, collection.getRelatedJob(), 100);
                                 FreeBuild.getInstance().getCollectionManager().addItemsToCollection(freeBuildPlayer, collection, collectionItem, droppedItem.get().getItemStack().getAmount());
                             }
                         }
@@ -72,6 +78,18 @@ public class CollectionListener implements Listener {
             }
 
 
+        }
+    }
+
+    @EventHandler
+    public void onClose(InventoryCloseEvent inventoryCloseEvent) {
+        if(inventoryCloseEvent.getInventory().getHolder() instanceof InventoryBuilder inventoryBuilder) {
+
+            if(inventoryBuilder.handleClose(inventoryCloseEvent)) {
+                //Bukkit.getScheduler().runTask(FreeBuild.getInstance().getPaperCore(), () -> inventoryBuilder.open((Player) inventoryCloseEvent.getPlayer()));
+            }
+
+            return;
         }
     }
 

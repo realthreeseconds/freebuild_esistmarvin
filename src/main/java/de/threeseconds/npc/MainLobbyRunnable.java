@@ -1,6 +1,8 @@
 package de.threeseconds.npc;
 
 import de.threeseconds.FreeBuild;
+import de.threeseconds.plot.Plot;
+import de.threeseconds.plot.PlotGroup;
 import de.threeseconds.quest.Chapter;
 import de.threeseconds.util.FreeBuildPlayer;
 import org.bukkit.Bukkit;
@@ -17,7 +19,32 @@ public class MainLobbyRunnable extends BukkitRunnable {
     @Override
     public void run() {
 
-        /*  NPCs JUST FOR THE QUESTPLAYER VISIBLE
+/*
+        FreeBuild.getInstance().getQuestManager().getFreeBuildPlayers().forEach((uuid, freeBuildPlayer) -> {
+            if(FreeBuild.getInstance().getPlotManager().getPlots() != null && FreeBuild.getInstance().getPlotManager().getPlotByChunk(freeBuildPlayer.getPlayer().getChunk()) != null) {
+                if(freeBuildPlayer.getPlayer().getChunk() == FreeBuild.getInstance().getPlotManager().getPlotByChunk(freeBuildPlayer.getPlayer().getChunk()).getPlotChunk()) {
+                    Plot plot = FreeBuild.getInstance().getPlotManager().getPlotByChunk(freeBuildPlayer.getPlayer().getChunk());
+
+                    if(!plot.getPlotMembers().containsKey(freeBuildPlayer)) {
+                        plot.getPlotMembers().forEach((plotMembers, plotGroup) -> plot.setGroup(plotMembers, freeBuildPlayer, PlotGroup.GUEST));
+                    }
+
+
+                } else {
+                    FreeBuild.getInstance().getPlotManager().getPlots().forEach(plots -> {
+                        if(plots.getPlotMembers().containsKey(freeBuildPlayer)) {
+                            plots.removePlayer(freeBuildPlayer);
+                        }
+                    });
+
+
+                }
+            }
+
+        });
+
+
+          NPCs JUST FOR THE QUESTPLAYER VISIBLE
         Bukkit.getOnlinePlayers().forEach(player -> {
             FreeBuildPlayer freeBuildPlayer = FreeBuild.getInstance().getQuestManager().getFreeBuildPlayer(player);
 
@@ -61,7 +88,9 @@ public class MainLobbyRunnable extends BukkitRunnable {
             }
         });
 
-         */
+
+
+
 
 
 
@@ -72,7 +101,7 @@ public class MainLobbyRunnable extends BukkitRunnable {
             Integer souls = freeBuildPlayer.getSouls();
             Integer defense = freeBuildPlayer.getDefense();
 
-            player.sendActionBar(FreeBuild.getInstance().getMiniMessage().deserialize("<gradient:#30CFD0:#926DD1>\uD83D\uDD25 " + souls + "/50 Seelen</gradient>     <gradient:#AB2F41:#FF2B24>❤ " + health + "/100 Leben</gradient>     <gradient:#51E611:#48944D>\uD83D\uDEE1 " + defense + "/10 Verteidigung</gradient>"));
+            player.sendActionBar(freeBuildPlayer.getActionBar());
 
 
 
@@ -106,7 +135,7 @@ public class MainLobbyRunnable extends BukkitRunnable {
             }
 
         }));
-
+        */
 
     }
 

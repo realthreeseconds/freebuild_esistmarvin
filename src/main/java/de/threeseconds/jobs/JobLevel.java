@@ -1,6 +1,8 @@
 package de.threeseconds.jobs;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class JobLevel {
 
@@ -20,6 +22,9 @@ public class JobLevel {
         return level;
     }
 
+    public String getCompactMaxXP() {
+        return NumberFormat.getCompactNumberInstance(Locale.US, NumberFormat.Style.SHORT).format(maxXP).toLowerCase();
+    }
     public Integer getMaxXP() {
         return maxXP;
     }

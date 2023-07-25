@@ -11,10 +11,12 @@ import de.threeseconds.jobs.JobDataType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.minecraft.world.item.Item;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
@@ -28,6 +30,7 @@ import javax.naming.Name;
 import javax.xml.stream.events.Namespace;
 import java.io.Serializable;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class ItemBuilder implements Serializable {
 
@@ -42,8 +45,15 @@ public class ItemBuilder implements Serializable {
         this.itemStack = itemStack;
     }
 
+
     public ItemBuilder(Material material) {
         this.itemStack = new ItemStack(material);
+    }
+
+    public ItemBuilder(Material material, short durability) {
+        this.itemStack = new ItemStack(material);
+
+        this.itemStack.setDurability(durability);
     }
 
     public ItemBuilder setDamage(int damage) {
@@ -73,6 +83,11 @@ public class ItemBuilder implements Serializable {
         return this;
     }
 
+    public ItemBuilder setMaxDurability(short durability) {
+        this.itemStack.setDurability(durability);
+        return this;
+    }
+
     public ItemBuilder setSkullTexture(PlayerTextures playerTextures) {
         SkullMeta skullMeta = (SkullMeta)this.itemStack.getItemMeta();
         PlayerProfile playerProfile = Bukkit.createProfile(UUID.randomUUID());
@@ -83,11 +98,13 @@ public class ItemBuilder implements Serializable {
     }
 
     public ItemBuilder setSkullTexture(String skinValue) {
-        SkullMeta skullMeta = (SkullMeta)this.itemStack.getItemMeta();
-        PlayerProfile playerProfile = Bukkit.createProfile(UUID.randomUUID());
-        playerProfile.setProperty(new ProfileProperty("textures", skinValue));
-        skullMeta.setPlayerProfile(playerProfile);
-        setSkullMeta(skullMeta);
+        if(skinValue != null) {
+            SkullMeta skullMeta = (SkullMeta)this.itemStack.getItemMeta();
+            PlayerProfile playerProfile = Bukkit.createProfile(UUID.randomUUID());
+            playerProfile.setProperty(new ProfileProperty("textures", skinValue));
+            skullMeta.setPlayerProfile(playerProfile);
+            setSkullMeta(skullMeta);
+        }
         return this;
     }
 
@@ -98,8 +115,8 @@ public class ItemBuilder implements Serializable {
         return this;
     }
 
-    public ItemBuilder addEnchantment(Enchantment enchantment, int level, boolean ignoreLevelRestriction) {
-        this.itemStack.getItemMeta().addEnchant(enchantment, level, ignoreLevelRestriction);
+    public ItemBuilder addEnchantment(Enchantment enchantment, int level) {
+        this.itemStack.addUnsafeEnchantment(enchantment, level);
         return this;
     }
 
@@ -115,8 +132,13 @@ public class ItemBuilder implements Serializable {
         } else {
             enchantment = Enchantment.ARROW_INFINITE;
         }
-        addEnchantment(enchantment, 0, true);
+        addEnchantment(enchantment, 0);
         addItemFlag(ItemFlag.HIDE_ENCHANTS);
+        return this;
+    }
+
+    public ItemBuilder setGlowing(boolean state) {
+        if(state) this.setGlowing();
         return this;
     }
 
@@ -133,8 +155,11 @@ public class ItemBuilder implements Serializable {
     }
 
     public ItemBuilder addLore(Component lore) {
-        List<Component> loreList = this.itemStack.lore();
-        loreList.add(lore);
+        List<Component> loreList;
+        if(this.itemStack.getItemMeta().hasLore()) {
+            loreList = this.itemStack.getItemMeta().lore();
+        } else loreList = new ArrayList<>();
+        loreList.add(lore.decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
         return this;
     }
 

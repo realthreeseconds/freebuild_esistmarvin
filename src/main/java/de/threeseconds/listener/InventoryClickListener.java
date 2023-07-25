@@ -14,6 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -31,47 +32,25 @@ public class InventoryClickListener implements Listener {
 
         if(!(inventoryClickEvent.getWhoClicked() instanceof Player player)) return;
 
-        if(inventoryClickEvent.getCurrentItem() == null) {
+        if(player.getOpenInventory().getSlotType(8) == InventoryType.SlotType.QUICKBAR) {
             inventoryClickEvent.setCancelled(true);
             return;
         }
 
-        if(inventoryClickEvent.getClick() == ClickType.NUMBER_KEY && inventoryClickEvent.getHotbarButton() == 8) inventoryClickEvent.setCancelled(true);
-
-        if(inventoryClickEvent.getCurrentItem().getItemMeta() == null) return;
-
-        if(FreeBuild.getInstance().checkPDC("menu-item", inventoryClickEvent.getCurrentItem().getItemMeta().getPersistentDataContainer(), "<green><b>Menü</b> <dark_gray>» <gray>Rechtsklick")) {
+        if(inventoryClickEvent.getSlotType() == InventoryType.SlotType.QUICKBAR && inventoryClickEvent.getSlot() == 8) {
             inventoryClickEvent.setCancelled(true);
-            return;
+
         }
 
+        if((inventoryClickEvent.getClick() == ClickType.NUMBER_KEY && inventoryClickEvent.getHotbarButton() == 8)) {
+            inventoryClickEvent.setCancelled(true);
+
+        }
 
         if(inventoryClickEvent.getInventory().getHolder() instanceof InventoryBuilder inventoryBuilder) {
             inventoryBuilder.handleClick(inventoryClickEvent);
 
             return;
-        }
-
-        if(inventoryClickEvent.getView().title().equals(FreeBuild.getInstance().getMiniMessage().deserialize("<dark_gray>» <gradient:#E0167B:#D9D938>Menü</gradient>"))) {
-            inventoryClickEvent.setCancelled(true);
-
-            if(inventoryClickEvent.getCurrentItem() == null) return;
-
-            if(inventoryClickEvent.getCurrentItem().getType() == Material.PLAYER_HEAD && inventoryClickEvent.getSlot() == 47) {
-                FreeBuildPlayer freeBuildPlayer = FreeBuild.getInstance().getQuestManager().getFreeBuildPlayer(player);
-
-                player.closeInventory();
-                player.teleport(freeBuildPlayer.getFastTravelLocation());
-                player.playSound(player, Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
-                return;
-            }
-
-            if(inventoryClickEvent.getCurrentItem().getType() == Material.PAPER && inventoryClickEvent.getSlot() == 24) {
-                FreeBuildPlayer freeBuildPlayer = FreeBuild.getInstance().getQuestManager().getFreeBuildPlayer(player);
-
-                new CollectionInventories.DefaultInventory(freeBuildPlayer).open(player);
-                return;
-            }
         }
 
     }

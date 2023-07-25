@@ -2,12 +2,19 @@ package de.threeseconds;
 
 import de.privateseconds.coresystem.module.Module;
 import de.threeseconds.collections.CollectionManager;
+import de.threeseconds.commands.BuildCommand;
+import de.threeseconds.commands.ClaimCommand;
 import de.threeseconds.commands.SpawnCommand;
+import de.threeseconds.crafting.CraftingHandle;
+import de.threeseconds.crafting.PacketHandler;
 import de.threeseconds.jobs.JobManager;
 import de.threeseconds.listener.*;
 import de.threeseconds.npc.*;
+import de.threeseconds.plot.PlotManager;
+import de.threeseconds.plot.listener.EnterPlotListener;
 import de.threeseconds.quest.QuestManager;
-import de.threeseconds.util.MenuManager;
+import de.threeseconds.stats.indicator.IndicatorManager;
+import de.threeseconds.storage.StorageManager;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
@@ -31,8 +38,13 @@ public final class FreeBuild extends Module {
     private HologramManager hologramManager;
     private QuestManager questManager;
     private JobManager jobManager;
-    private MenuManager menuManager;
     private CollectionManager collectionManager;
+    private StorageManager storageManager;
+    private PlotManager plotManager;
+
+
+    private IndicatorManager indicatorManager;
+
 
 
     @Override
@@ -59,7 +71,7 @@ public final class FreeBuild extends Module {
 
     @Override
     public void onDisable() {
-        Bukkit.getScheduler().getPendingTasks().forEach(BukkitTask::cancel);
+        this.indicatorManager.activeArmorStands().keySet().forEach(this.indicatorManager.activeArmorStands()::remove);
     }
 
     private void init() {
@@ -80,8 +92,10 @@ public final class FreeBuild extends Module {
         this.hologramManager = new HologramManager();
         this.questManager = new QuestManager();
         this.jobManager = new JobManager();
-        this.menuManager = new MenuManager();
         this.collectionManager = new CollectionManager();
+        this.storageManager = new StorageManager();
+        this.plotManager = new PlotManager();
+        this.indicatorManager = new IndicatorManager();
     }
 
     private void initListener() {
@@ -92,10 +106,16 @@ public final class FreeBuild extends Module {
         new InventoryClickListener();
         new ItemInteractListener();
         new CollectionListener();
+        new EnterPlotListener();
+        new CraftingHandle();
+
+        new PacketHandler();
     }
 
     private void initCommands() {
         new SpawnCommand();
+        new BuildCommand();
+        new ClaimCommand();
     }
 
     public boolean checkPDC(String itemKey, PersistentDataContainer persistentDataContainer, String checkedValue) {
@@ -146,6 +166,10 @@ public final class FreeBuild extends Module {
         return null;
     }
 
+    public IndicatorManager getIndicatorManager() {
+        return indicatorManager;
+    }
+
     public static FreeBuild getInstance() {
         return instance;
     }
@@ -174,15 +198,19 @@ public final class FreeBuild extends Module {
         return jobManager;
     }
 
-    public MenuManager getMenuManager() {
-        return menuManager;
-    }
-
     public MiniMessage getMiniMessage() {
         return miniMessage;
     }
 
     public CollectionManager getCollectionManager() {
         return collectionManager;
+    }
+
+    public StorageManager getStorageManager() {
+        return storageManager;
+    }
+
+    public PlotManager getPlotManager() {
+        return plotManager;
     }
 }

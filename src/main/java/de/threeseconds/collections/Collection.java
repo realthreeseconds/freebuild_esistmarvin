@@ -1,6 +1,7 @@
 package de.threeseconds.collections;
 
 import de.threeseconds.FreeBuild;
+import de.threeseconds.jobs.Job;
 import de.threeseconds.util.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
@@ -17,6 +18,8 @@ public enum Collection {
             new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE),
 
             "<gray>",
+
+            Job.MINER,
 
             new CollectionItem(new ItemBuilder(Material.NETHERITE_SCRAP), 50, 100, 250, 1000, 2500),
             new CollectionItem(new ItemBuilder(Material.GOLD_INGOT), 50, 100, 250, 1000, 2500),
@@ -49,6 +52,8 @@ public enum Collection {
 
             "<color:#8B4513>",
 
+            Job.HOLZFÄLLER,
+
             new CollectionItem(new ItemBuilder(Material.OAK_LOG), 50, 100, 250, 1000, 2500),
             new CollectionItem(new ItemBuilder(Material.SPRUCE_LOG), 50, 100, 250, 1000, 2500),
             new CollectionItem(new ItemBuilder(Material.BIRCH_LOG), 50, 100, 250, 1000, 2500),
@@ -66,6 +71,8 @@ public enum Collection {
             new ItemBuilder(Material.BLUE_STAINED_GLASS_PANE),
 
             "<blue>",
+
+            Job.FISCHER,
 
             new CollectionItem(new ItemBuilder(Material.CLAY_BALL), 50, 100, 250, 1000, 2500),
             new CollectionItem(new ItemBuilder(Material.TROPICAL_FISH), 50, 100, 250, 1000, 2500),
@@ -85,6 +92,8 @@ public enum Collection {
 
             "<dark_purple>",
 
+            Job.JÄGER,
+
             new CollectionItem(new ItemBuilder(Material.BONE), 50, 100, 250, 1000, 2500),
             new CollectionItem(new ItemBuilder(Material.SPIDER_EYE), 50, 100, 250, 1000, 2500),
             new CollectionItem(new ItemBuilder(Material.ROTTEN_FLESH), 50, 100, 250, 1000, 2500),
@@ -101,13 +110,19 @@ public enum Collection {
     private ItemBuilder mainItem;
     private ItemBuilder borderPane;
     private String colorCode;
+    private Job relatedJob;
     private List<CollectionItem> collectionItems;
 
-    Collection(ItemBuilder mainItem, ItemBuilder borderPane, String colorCode, CollectionItem... collectionItems) {
+    Collection(ItemBuilder mainItem, ItemBuilder borderPane, String colorCode, Job relatedJob, CollectionItem... collectionItems) {
         this.mainItem = mainItem;
         this.borderPane = borderPane;
         this.colorCode = colorCode;
+        this.relatedJob = relatedJob;
         this.collectionItems = List.of(collectionItems);
+    }
+
+    public Job getRelatedJob() {
+        return relatedJob;
     }
 
     public ItemBuilder getMainItem() {

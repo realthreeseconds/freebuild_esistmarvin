@@ -20,12 +20,17 @@ java {
 repositories {
     mavenCentral()
     mavenLocal()
+    maven ( "https://jitpack.io" )
+    maven ( "https://repo.dmulloy2.net/repository/public/" )
 }
 
 dependencies {
+    implementation("org.projectlombok:lombok:1.18.26")
     paperweight.paperDevBundle("1.20-R0.1-SNAPSHOT")
-    compileOnly("de.privateseconds:CoreSystem:0.0.1-SNAPSHOT")
-    compileOnly("de.privateseconds:PermissionCenterModulePaper:0.0.1-SNAPSHOT")
+    compileOnly("de.privateseconds:CoreSystem:1.0.0-SNAPSHOT")
+    compileOnly("de.privateseconds:PermissionCenterModulePaper:1.0.0-SNAPSHOT")
+    compileOnly("com.github.BlueMap-Minecraft:BlueMapAPI:v2.5.1")
+    compileOnly("com.comphenix.protocol:ProtocolLib:4.8.0")
     implementation("redis.clients:jedis:4.4.3")
     // paperweight.foliaDevBundle("1.20-R0.1-SNAPSHOT")
     // paperweight.devBundle("com.example.paperfork", "1.20-R0.1-SNAPSHOT")
